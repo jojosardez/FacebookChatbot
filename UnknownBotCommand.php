@@ -1,11 +1,11 @@
 <?php
 
 class UnknownBotCommand extends BotCommand {
-    public function __construct($command) {
-        parent::__construct($command);
+    public function __construct($command, $sender, $user) {
+        parent::__construct($command, $sender, $user);
     }
 
     protected function executeCommand($parameter) {
-        return 'Unknown command "'.$this->getCommand().'" was received.';
+        $this->send("Unknown command \"".$this->command."\" was received, ".$this->user->getFirstName().".");
     }
 }

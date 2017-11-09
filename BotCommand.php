@@ -1,18 +1,22 @@
 <?php
 
 abstract class BotCommand {
-    public function __construct($command) {
-        $this->command   = $command;
+    public function __construct($command, $sender, $user) {
+        $this->command = $command;
+        $this->sender = $sender;
+        $this->user = $user;
     }
 
     protected $command;   
+    protected $sender;   
+    protected $user;   
     abstract protected function executeCommand($parameter);
 
-    protected function getCommand() {
-        return $this->command;
+    public function execute($parameter) {
+        $this->executeCommand($parameter);
     }
 
-    public function execute($parameter) {
-        return $this->executeCommand($parameter);
+    protected function send($message) {
+        $this->sender->send($message);
     }
 }

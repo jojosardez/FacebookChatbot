@@ -1,60 +1,60 @@
 <?php
 
 class BotCommandFactory {
-    public static function create($command) {
+    public static function create($command, $sender, $user) {
         $commandLower = strtolower($command);
         switch($commandLower)
         {
             case "echo":
-                return new EchoBotCommand();
+                return new EchoBotCommand($sender, $user);
                 break;
             case "hi":
-                return new HiBotCommand();
+                return new HiBotCommand($sender, $user);
                 break;
             case "imdb":
-                return new ImdbBotCommand();
+                return new ImdbBotCommand($sender, $user);
                 break;
             case "cinema":
-                return new CinemaBotCommand();
+                return new CinemaBotCommand($sender, $user);
                 break;
             case "php":
-                return new PhpBotCommand();
+                return new PhpBotCommand($sender, $user);
                 break;
             case "weather":
-                return new WeatherBotCommand();
+                return new WeatherBotCommand($sender, $user);
                 break;
             case "phone":
-                return new PhoneBotCommand();
+                return new PhoneBotCommand($sender, $user);
                 break;
             case "gender":
-                return new GenderBotCommand();
+                return new GenderBotCommand($sender, $user);
                 break;
             case "recipe":
-                return new RecipeBotCommand();
+                return new RecipeBotCommand($sender, $user);
                 break;
             case "pokedex":
-                return new PokedexBotCommand();
+                return new PokedexBotCommand($sender, $user);
                 break;
             case "ip":
-                return new IpBotCommand();
+                return new IpBotCommand($sender, $user);
                 break;
             case "history":
-                return new HistoryBotCommand();
+                return new HistoryBotCommand($sender, $user);
                 break;
             case "trump":
-                return new TrumpBotCommand();
+                return new TrumpBotCommand($sender, $user);
                 break;
             case "university":
-                return new UniversityBotCommand();
+                return new UniversityBotCommand($sender, $user);
                 break;
             case "netflix":
-                return new NetflixBotCommand();
+                return new NetflixBotCommand($sender, $user);
                 break;
             case "remind":
-                return new RemindBotCommand();
+                return new RemindBotCommand($sender, $user);
                 break;
             default:
-                return new UnknownBotCommand($command);
+                return new UnknownBotCommand($command, $sender, $user);
         }
     }
 }

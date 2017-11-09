@@ -13,35 +13,17 @@ if ($_REQUEST['hub_verify_token'] === $hubVerifyToken) {
   echo $_REQUEST['hub_challenge'];
   exit;
 }
-// handle bot's anwser
+// execute bot command
 $input = json_decode(file_get_contents('php://input'), true);
 $senderId = $input['entry'][0]['messaging'][0]['sender']['id'];
 $messageText = $input['entry'][0]['messaging'][0]['message']['text'];
 $command = trim(explode(" ", $messageText)[0]);
 $parameter =  trim(substr($messageText, strlen($command)));
+// get userDetails
+$userDetails = json_decode(file_get_contents('https://graph.facebook.com/v2.6/'.$senderId.'?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token='.$accessToken), true);
+$user = new User($userDetails);
+// create sender
+$sender = new Sender($senderId, $accessToken);
 // resolve bot command
-$botCommand = BotCommandFactory::create($command);
-$answer = $botCommand->execute($parameter);
-//send message to facebook bot
-if (is_string($answer))
-{
-    $response = [
-        'recipient' => [ 'id' => $senderId ],
-        'message' => [ 'text' => $answer ]
-    ];
-}
-else
-{
-    $response = [
-        'recipient' => [ 'id' => $senderId ],
-        'message' => $answer
-    ]; 
-}
-$ch = curl_init('https://graph.facebook.com/v2.6/me/messages?access_token='.$accessToken);
-curl_setopt($ch, CURLOPT_POST, 1);
-curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($response));
-curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-if(!empty($input)){
-$result = curl_exec($ch);
-}
-curl_close($ch);
+$botCommand = BotCommandFactory::create($command, $sender, $user);
+$botCommand->execute($parameter);

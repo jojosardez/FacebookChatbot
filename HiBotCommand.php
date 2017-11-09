@@ -1,11 +1,11 @@
 <?php
 
 class HiBotCommand extends BotCommand {
-    public function __construct() {
-        parent::__construct("HI");
+    public function __construct($sender, $user) {
+        parent::__construct("HI", $sender, $user);
     }
 
     protected function executeCommand($parameter) {
-        return "Hello";
+        $this->send("Hello, ".$this->user->getFirstName()."!");
     }
 }

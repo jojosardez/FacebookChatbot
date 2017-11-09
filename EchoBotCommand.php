@@ -1,16 +1,16 @@
 <?php
 
 class EchoBotCommand extends BotCommand {
-    public function __construct() {
-        parent::__construct("ECHO");
+    public function __construct($sender, $user) {
+        parent::__construct("ECHO", $sender, $user);
     }
 
-    protected function executeCommand($parameter) {        
+    protected function executeCommand($parameter) {
         if ($parameter == "") {
-            return "Nothing to echo back!";
+            $this->send("Nothing to echo back, ".$this->user->getFirstName()."!");
         }
         else {
-            return $parameter;
+            $this->send($parameter);
         }
     }
 }
