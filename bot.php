@@ -25,5 +25,10 @@ $user = new User($userDetails);
 // create sender
 $sender = new Sender($senderId, $accessToken);
 // resolve bot command
-$botCommand = BotCommandFactory::create($command, $sender, $user);
-$botCommand->execute($parameter);
+try {
+  $botCommand = BotCommandFactory::create($command, $sender, $user);
+  $botCommand->execute($parameter);
+}
+catch  (Exception $e) {
+  $sender->send("Oops! I encountered an exception: \"".$e->getMessage()."\". Sorry about that, ".$user->getFirstName().". Please try again.");
+}
