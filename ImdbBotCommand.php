@@ -12,9 +12,9 @@ class ImdbBotCommand extends BotCommand {
               "template_type"=>"generic",
               "elements"=>[
                 [
-                  "title"=>$this->getCommand()." command is not yet implemented. Parameter passed: ".$parameter,
+                  "title"=>$this->command." command is not yet implemented. Parameter passed: ".$parameter,
                   "image_url"=>"https://cdn.elegantthemes.com/blog/wp-content/uploads/2016/03/500-internal-server-error.jpg",
-                  "subtitle"=>$this->getCommand()." command is not yet implemented. Parameter passed: ".$parameter
+                  "subtitle"=>$this->command." command is not yet implemented. Parameter passed: ".$parameter
                 ]
               ]
             ]
