@@ -7,7 +7,7 @@ foreach ($files as $file) {
 
 // parameters
 $hubVerifyToken = 'Is238Group5Chatbot';
-$accessToken =   "EAAKiQ7FkXIgBAACmoZBPAaZBvPxj7cblkIw9xEoOmXc6z41OSMSbMQsZAAcZB5nvucMrZAfzpc2cWPl6sgLuPpy4mPY7J1iZB4kDdq1Y9e7MOLrTSumhp1DhWU9Iwz6atAD5jA8TA5vTLZBT2dZAdnp8bXvA3B01NZCL4slzis3kMOLzZBoMW6gqN4"; 
+$accessToken =   "EAAKiQ7FkXIgBADS6JF2jAgG6MoMMZBLaboCtC1mbphtlELZC72GMvsJ7Uj7GIB5ZAUuD9IkfSSSSyiQZAdn0rOnb932Y12Bma81B71ZCEvEzh7keLK1yN240nCd2wjxB8jq4Q3GSrjW0q65EW91ZC9sDWdymQWtAajuumLgaw1nPM2DesYzwZAl"; 
 // check token at setup
 if ($_REQUEST['hub_verify_token'] === $hubVerifyToken) {
   echo $_REQUEST['hub_challenge'];
