@@ -11,13 +11,13 @@ class NetflixBotCommand extends BotCommand {
             return;
         }
        
-        $queryResult = $this->queryTitles($parameter);
-        if ($queryResult['COUNT'] == 0) {
+        $titles = $this->queryTitles($parameter);
+        if ($titles['COUNT'] == 0) {
             $this->send("No movie or series found with the title \"".$parameter."\", ".$this->user->getFirstName().". The movie or series you're looking for is not in Netflix.");            
         }
         else {
-            $titlesSentCount = $this->sendTitles($parameter, $queryResult);
-            $this->sendMultipleTitlesMessage($titlesSentCount, $queryResult['COUNT'], $parameter);
+            $titlesSentCount = $this->sendTitles($parameter, $titles);
+            $this->sendMultipleTitlesMessage($titlesSentCount, $titles['COUNT'], $parameter);
         }
     }
 
@@ -57,17 +57,17 @@ class NetflixBotCommand extends BotCommand {
         ]];
     }
 
-    function sendTitles($title, $queryResult) {        
+    function sendTitles($title, $titles) {        
         $responseTemplate = $this->getResponseTemplate($title);
         $titleCount = 0;
-        while ($titleCount < 4 && $titleCount < $queryResult['COUNT']) {
+        while ($titleCount < 4 && $titleCount < $titles['COUNT']) {
             $responseTemplate["attachment"]["payload"]["elements"][] = [
-                "title"=>html_entity_decode(strip_tags($queryResult['ITEMS'][$titleCount][1]), ENT_QUOTES)." (".ucfirst($queryResult['ITEMS'][$titleCount][6]).", ".$queryResult['ITEMS'][$titleCount][7].")",
-                "image_url"=>$queryResult['ITEMS'][$titleCount][2],
-                "subtitle"=>html_entity_decode(strip_tags($queryResult['ITEMS'][$titleCount][3]), ENT_QUOTES),
+                "title"=>html_entity_decode(strip_tags($titles['ITEMS'][$titleCount][1]), ENT_QUOTES)." (".ucfirst($titles['ITEMS'][$titleCount][6]).", ".$titles['ITEMS'][$titleCount][7].")",
+                "image_url"=>$titles['ITEMS'][$titleCount][2],
+                "subtitle"=>html_entity_decode(strip_tags($titles['ITEMS'][$titleCount][3]), ENT_QUOTES),
                 "default_action"=>[
                     "type"=>"web_url",
-                    "url"=>"https://unogs.com/video/?v=".$queryResult['ITEMS'][$titleCount][4]
+                    "url"=>"https://unogs.com/video/?v=".$titles['ITEMS'][$titleCount][4]
                 ]
             ];
             $titleCount++;

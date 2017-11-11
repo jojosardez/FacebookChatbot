@@ -14,8 +14,8 @@ class WeatherBotCommand extends BotCommand
             return;
         }
 
-        $queryResult = $this->queryLocation($parameter);
-        $zmwCode = $this->getZmwCode($queryResult);
+        $locations = $this->queryLocation($parameter);
+        $zmwCode = $this->getZmwCode($locations);
 
         if (empty($zmwCode)) {
           $this->send("No weather condition and forecast found for the location \"".$parameter."\", ".$this->user->getFirstName().". Please make sure that the place exists or be more specific in providing the location. (e.g. WEATHER Singapore, Singapore)");
@@ -23,20 +23,20 @@ class WeatherBotCommand extends BotCommand
         else {
             $weatherCondition = $this->getWeatherCondition($zmwCode);
             $this->sendWeatherCondition($zmwCode, $weatherCondition);
-            $this->sendMultipleLocationsMessage($queryResult, $parameter);
+            $this->sendMultipleLocationsMessage($locations, $parameter);
         }
     }
 
-    function queryLocation($parameter) {
-        return json_decode(file_get_contents('http://autocomplete.wunderground.com/aq?query='.urlencode($parameter)), true);
+    function queryLocation($location) {
+        return json_decode(file_get_contents('http://autocomplete.wunderground.com/aq?query='.urlencode($location)), true);
     }
 
-    function getZmwCode($queryResult) {
+    function getZmwCode($locations) {
         $zmwCode = "";
-        if (!empty($queryResult['RESULTS'])) {
-            foreach ($queryResult['RESULTS'] as &$location) {
-                if (strtolower($location['tz']) != 'missing') {
-                    $zmwCode = $location['zmw'];
+        if (!empty($locations['RESULTS'])) {
+            foreach ($locations['RESULTS'] as &$place) {
+                if (strtolower($place['tz']) != 'missing') {
+                    $zmwCode = $place['zmw'];
                     break;
                 }
             }
@@ -75,13 +75,13 @@ class WeatherBotCommand extends BotCommand
             ]]);
     }
 
-    function sendMultipleLocationsMessage($queryResult, $parameter) {
-        if (sizeof($queryResult['RESULTS']) > 1) {
-            $locations = "";
-            foreach ($queryResult['RESULTS'] as &$location) {
-                $locations = $locations.$location['name']." | ";
+    function sendMultipleLocationsMessage($locations, $location) {
+        if (sizeof($locations['RESULTS']) > 1) {
+            $locationsText = "";
+            foreach ($locations['RESULTS'] as &$place) {
+                $locationsText = $locationsText.$place['name']." | ";
             }
-            $this->send("Hey ".$this->user->getFirstName().", there were actually ".sizeof($queryResult['RESULTS'])." locations that matched \"".$parameter."\". I just returned the most relevant match but you can be more specific by typing the name of the other locations completely. (e.g. WEATHER < ".rtrim($locations,"| ")." >)");
+            $this->send("Hey ".$this->user->getFirstName().", there were actually ".sizeof($locations['RESULTS'])." locations that matched \"".$location."\". I just returned the most relevant match but you can be more specific by typing the name of the other locations completely. (e.g. WEATHER < ".rtrim($locationsText,"| ")." >)");
         }
     }
 }
