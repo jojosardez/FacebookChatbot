@@ -7,7 +7,7 @@ class NetflixBotCommand extends BotCommand {
 
     protected function executeCommand($parameter) {   
         if (trim($parameter) == "") {
-            $this->send("Sorry ".$this->user->getFirstName().", you need to specify the Netflix movie or series title that you want to search.");
+            $this->sendTextWithHelp("Sorry ".$this->user->getFirstName().", you need to specify the Netflix movie or series title that you want to search.");
             return;
         }
        

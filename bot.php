@@ -16,6 +16,10 @@ if ($_REQUEST['hub_verify_token'] === $hubVerifyToken) {
 // execute bot command
 $input = json_decode(file_get_contents('php://input'), true);
 $senderId = $input['entry'][0]['messaging'][0]['sender']['id'];
+// create sender
+$sender = new Sender($senderId, $accessToken);
+$sender->sendAction(SenderAction::typingOn);
+// extract message
 $messageText = $input['entry'][0]['messaging'][0]['message']['text'];
 if (trim($messageText) == "") {
   $messageText = $input['entry'][0]['messaging'][0]['postback']['payload'];
@@ -25,13 +29,13 @@ $parameter =  trim(substr($messageText, strlen($command)));
 // get userDetails
 $userDetails = json_decode(file_get_contents('https://graph.facebook.com/v2.11/'.$senderId.'?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token='.$accessToken), true);
 $user = new User($userDetails);
-// create sender
-$sender = new Sender($senderId, $accessToken);
 // resolve bot command
 try {
   $botCommand = BotCommandFactory::create($command, $sender, $user);
   $botCommand->execute($parameter);
+  $sender->sendAction(SenderAction::typingOff);
 }
 catch  (Exception $e) {
   $sender->send("Oops! I encountered an exception: \"".$e->getMessage()."\". Sorry about that, ".$user->getFirstName().". Please try again.");
 }
+$sender->sendAction(SenderAction::typingOff);

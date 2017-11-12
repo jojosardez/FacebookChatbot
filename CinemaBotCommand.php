@@ -7,7 +7,7 @@ class CinemaBotCommand extends BotCommand {
 
     protected function executeCommand($parameter) {
         if (trim($parameter) == "") {
-            $this->send("Sorry ".$this->user->getFirstName().", you need to specify the Ayala Malls Cinema name, whose viewing schedules you wanted to see. (e.g. CINEMA Glorietta 4).");
+            $this->sendTextWithHelp("Sorry ".$this->user->getFirstName().", you need to specify the Ayala Malls Cinema name, whose viewing schedules you wanted to see. (e.g. CINEMA Glorietta 4).");
             return;
         }
 
@@ -67,7 +67,8 @@ class CinemaBotCommand extends BotCommand {
     }
 
     function sendMovieCinemas($theater, $movies) {
-        $this->send("Showing \"".$theater['name']."\" cinema schedules for today (".date('F j, Y').")...");
+        $this->send("Displaying \"".$theater['name']."\" cinema schedules for today (".date('F j, Y').")...");
+        $this->sendAction(SenderAction::typingOn);
         $sent = false;
         $responseTemplate = $this->getResponseTemplate(true);
         $cinemaCount = 0;
@@ -92,6 +93,7 @@ class CinemaBotCommand extends BotCommand {
                                     $sent = true;
                                     $responseTemplate = $this->getResponseTemplate(false);
                                     $cinemaCount = 0;
+                                    $this->sendAction(SenderAction::typingOn);
                                 }
                             }
                             break 2;                    

@@ -10,7 +10,7 @@ class WeatherBotCommand extends BotCommand
     protected function executeCommand($parameter)
     {
         if (trim($parameter) == "") {
-            $this->send("Sorry ".$this->user->getFirstName().", you need to specify the location, whose weather condition and forecast you wanted to see. (e.g. WEATHER Manila PH)");
+            $this->sendTextWithHelp("Sorry ".$this->user->getFirstName().", you need to specify the location, whose weather condition and forecast you wanted to see. (e.g. WEATHER Manila PH)");
             return;
         }
 
