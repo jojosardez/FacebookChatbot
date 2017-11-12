@@ -5,6 +5,9 @@ class BotCommandFactory {
         $commandLower = strtolower($command);
         switch($commandLower)
         {
+            case "help":
+                return new HelpBotCommand($sender, $user);
+                break;
             case "echo":
                 return new EchoBotCommand($sender, $user);
                 break;
