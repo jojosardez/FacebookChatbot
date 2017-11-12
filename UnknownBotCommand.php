@@ -6,6 +6,19 @@ class UnknownBotCommand extends BotCommand {
     }
 
     protected function executeCommand($parameter) {
-        $this->send("Unknown command \"".$this->command."\" was received, ".$this->user->getFirstName().".");
+        $this->send(["attachment"=>[
+            "type"=>"template",
+            "payload"=>[
+                "template_type"=>"button",
+                "text"=>"Sorry, ".$this->user->getFirstName().". I don't know the command \"".$this->command."\". You may want to check the commands I support by typing \"HELP\" or by clicking the button below.",
+            "buttons"=>[
+                [
+                    "type"=>'postback',
+                    "title"=>'Display Help',
+                    "payload"=>'help'
+                ]
+            ]
+            ]
+        ]]);
     }
 }
