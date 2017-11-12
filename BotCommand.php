@@ -19,4 +19,33 @@ abstract class BotCommand {
     protected function send($message) {
         $this->sender->send($message);
     }
+
+    protected function sendTextWithHelp($message, $showCompleteHelp = true) {
+        $template = ["attachment"=>[
+            "type"=>"template",
+            "payload"=>[
+                "template_type"=>"button",
+                "text"=>$message,
+            "buttons"=>[
+                [
+                    "type"=>'postback',
+                    "title"=>'See '.$this->command.' Help',
+                    "payload"=>'help '.$this->command
+                ]
+            ]
+            ]
+        ]];
+        if ($showCompleteHelp) {
+            $template['attachment']['payload']['buttons'][] = [
+                "type"=>'postback',
+                "title"=>'See Complete Help',
+                "payload"=>'help'
+            ];
+        }
+        $this->sender->send($template);
+    }
+
+    protected function sendAction($action) {
+        $this->sender->sendAction($action);
+    }
 }
