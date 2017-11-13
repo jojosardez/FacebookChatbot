@@ -6,6 +6,7 @@ class RemindBotCommand extends BotCommand {
     }
 
     protected function executeCommand($parameter) {
-        $this->send($this->command." command is not yet implemented, ".$this->user->getFirstName().". Parameter passed: ".$parameter);
+        shell_exec('php /var/www/html/bot/ReminderScript.php '.$this->sender->getSenderId().' '.$this->sender->getAccessToken().' '.$this->user->getFirstName().' '.'10'.' '.urlencode('Remind '.$parameter).' > /dev/null 2>/dev/null &');
+        $this->send("Got it, ".$this->user->getFirstName()."!. I'll remind you when it's time.");
     }
 }
