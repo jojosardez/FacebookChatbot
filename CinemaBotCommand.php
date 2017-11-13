@@ -67,6 +67,7 @@ class CinemaBotCommand extends BotCommand {
     }
 
     function sendMovieCinemas($theater, $movies) {
+        date_default_timezone_set('Asia/Manila');
         $this->send("Displaying \"".$theater['name']."\" cinema schedules for today (".date('F j, Y').")...");
         $this->sendAction(SenderAction::typingOn);
         $sent = false;
