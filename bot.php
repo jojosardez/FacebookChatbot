@@ -9,10 +9,10 @@ foreach ($files as $file) {
 $hubVerifyToken = 'Is238Group5Chatbot';
 $accessToken =   "EAAKiQ7FkXIgBAGMwBMNT5gkSHdH0u5jS0mlrM1Tj5ElOnMOSPxryIgsLK2t1lV1KcIkpDpcklIIJfBLsfTcbi02BTarZBnUBEoKxMAHPDWqkAuSqcWSb7xjkpc9n5aTOzgP20c3Y1liZB8Wu2tN4OQBMkb4ObGKZCfWmhEmY21DxJDJZBrNu"; 
 // check token at setup
-if ($_REQUEST['hub_verify_token'] === $hubVerifyToken) {
-  echo $_REQUEST['hub_challenge'];
-  exit;
-}
+//if ($_REQUEST['hub_verify_token'] === $hubVerifyToken) {
+//  echo $_REQUEST['hub_challenge'];
+//  exit;
+//}
 // execute bot command
 $input = json_decode(file_get_contents('php://input'), true);
 $senderId = $input['entry'][0]['messaging'][0]['sender']['id'];
