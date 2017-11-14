@@ -56,6 +56,20 @@ class BotCommandFactory {
             case "remind":
                 return new RemindBotCommand($sender, $user);
                 break;
+            case "search":
+            case "find":
+            case "look":
+            case "query":
+                return new SearchBotCommand("SEARCH", $sender, $user);
+                break;
+            case "new":
+            case "news":
+                return new SearchBotCommand("NEWS", $sender, $user);
+                break;
+            case "trend":
+            case "trending":
+                return new SearchBotCommand("TRENDING", $sender, $user);
+                break;
             default:
                 return new UnknownBotCommand($command, $sender, $user);
         }
