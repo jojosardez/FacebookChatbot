@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Class PokedexBotCommand
+ * This class queries PokeAPI service to return pokemon details
+ *
+ * Usage:
+ *  pokedex pokemon
+ *  pokedex number
+ *
+ * @author: Karez Bartolo
+ * @date: 15/11/2017
+ */
 class PokedexBotCommand extends BotCommand {
     public function __construct($sender, $user) {
         parent::__construct("POKEDEX", $sender, $user);
