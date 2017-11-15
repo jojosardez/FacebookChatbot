@@ -17,7 +17,7 @@
  *  NEWS | NEW <keyword>
  *
  * @author: Angelito Sardez, Jr.
- * @date: 15/11/2017
+ * @date: 16/11/2017
  */
 class SearchBotCommand extends BotCommand {
     public function __construct($command, $sender, $user) {
@@ -91,7 +91,7 @@ class SearchBotCommand extends BotCommand {
             ]
         ];
         $headerContext = stream_context_create($header);
-        return json_decode(file_get_contents('http://www.faroo.com/api?q='.($this->isTrending() ? '' : urlencode($keyword)).'&start='.$pageNum.'&length='.($this->isTrending() ? '10' : '4').'&l=en&src='.$this->getApiSrc($keyword).'&f=json', false, $headerContext), true);
+        return json_decode(file_get_contents('http://www.faroo.com/api?q='.($this->isTrending() ? '' : urlencode($keyword)).'&start='.$pageNum.'&length='.($this->isTrending() ? '10' : '8').'&l=en&src='.$this->getApiSrc($keyword).'&f=json', false, $headerContext), true);
     }
 
     function getApiSrc($keyword) {
@@ -126,7 +126,7 @@ class SearchBotCommand extends BotCommand {
                 "buttons"=>[
                     [
                         "type"=>'postback',
-                        "title"=>'Search Topics',
+                        "title"=>'View Articles',
                         "payload"=>'SEARCH '.$trend
                     ]
                 ]
@@ -153,61 +153,111 @@ class SearchBotCommand extends BotCommand {
         $template = ["attachment"=>[
             "type"=>"template",
             "payload"=>[
-                "template_type"=>"list",
-                "top_element_style"=>"large",
+                "template_type"=>"generic",
                 "elements"=>array()
             ]
         ]];
         return $template;
     }
-
-    function getSearchTimeTemplate($pageNum, $keyword, $total, $time) {
-        $template = ["attachment"=>[
-            "type"=>"template",
-            "payload"=>[
-                "template_type"=>"button",
-                "text"=>"Searching took ".$time." ms, ".$this->user->getFirstName().".",
-            "buttons"=>array()
-            ]
-            ]
-        ];
-        if ($pageNum > 1) {
-            $template["attachment"]["payload"]["buttons"][] = [
-                "type"=>'postback',
-                "title"=>'Previous Results',
-                "payload"=>$this->command.' '.($pageNum - 1).'~!@#'.$keyword
-            ];
-        }
-        if (($total - ($pageNum * 4)) > 0) {
-            $template["attachment"]["payload"]["buttons"][] = [
-                "type"=>'postback',
-                "title"=>'Next Results',
-                "payload"=>$this->command.' '.($pageNum + 1).'~!@#'.$keyword
-            ];
-        }
-        return $template;
-    }
     
+    function getSearchTerm() {
+        return $this->isSearch() ? 'topics' : 'news articles';
+    }
+
+    function getCountFrom($pageNum) {
+        return (($pageNum - 1) * 8) + 1;
+    }
+
+    function getCountTo($pageNum, $currentCount, $totalCount) {
+        $countTo = (($pageNum - 1) * 8) + $currentCount;
+        if ($countTo > $totalCount) {
+            $countTo = $totalCount;
+        }
+        return $countTo;
+    }
+
+    function getResultsCountRatioTerm($pageNum, $currentCount, $totalCount) {
+        return $this->getCountFrom($pageNum)." to ".$this->getCountTo($pageNum, $currentCount, $totalCount)." of ".$totalCount;
+    }
+
+    function getSetRatioTerm($pageNum,  $totalCount) {
+        return "Set ".$pageNum." of ".(round($totalCount / 8));
+    }
+
     function sendSearchResults($pageNum, $keyword, $searchResults) {
-        $this->send("Displaying ".(($keyword == '') ? "trending " : "").($this->isSearch() ? 'topics' : 'news articles')." ".((($pageNum - 1) * 4) + 1)." to ".((($pageNum - 1) * 4) + count($searchResults['results']))." of ".$searchResults['count']." (Page ".$pageNum." of ".($searchResults['count'] / 4).")".(($keyword == '') ? ":" : ", about \"".$keyword."\":"));  
+        $this->send("Displaying ".(($keyword == '') ? "trending " : "").
+            $this->getSearchTerm()." ".
+            $this->getResultsCountRatioTerm($pageNum, count($searchResults['results']), $searchResults['count']).
+            " (".$this->getSetRatioTerm($pageNum, $searchResults['count']).")".
+            (($keyword == '') ? ":" : ", about \"".$keyword."\":"));  
         $this->sendAction(SenderAction::typingOn);
         $responseTemplate = $this->getResponseTemplate();
+        
+        if ($pageNum > 1) {
+            $responseTemplate["attachment"]["payload"]["elements"][] = [
+                "title"=>'See previous results',
+                "image_url"=>'https://is238-group5.cf/bot/images/BackArrow.png',
+                "subtitle"=>'Display the previous or first set of '.$this->getSearchTerm().'.',
+                "buttons"=>[
+                    [
+                        "type"=>'postback',
+                        "title"=>'Previous Results',
+                        "payload"=>$this->command.' '.($pageNum - 1).'~!@#'.$keyword
+                    ],
+                    [
+                        "type"=>'postback',
+                        "title"=>'First Results',
+                        "payload"=>$this->command.' 1~!@#'.$keyword
+                    ]
+                ]
+            ];
+        }
+
+        $threshold = $this->getCountTo($pageNum, count($searchResults['results']), $searchResults['count']) - $this->getCountFrom($pageNum) + 1;
+        $currentCount = 0;
         foreach ($searchResults['results'] as &$result) {
             $responseTemplate["attachment"]["payload"]["elements"][] = [
                 "title"=>$result['title'],
-                "image_url"=>($result['iurl'] == '') ? 'http://cadeuc.com/wp-content/themes/musen/img/no-image.png' : $result['iurl'],
+                "image_url"=>($result['iurl'] == '') ? 'https://is238-group5.cf/bot/images/NoImageAvailable.png' : $result['iurl'],
                 "subtitle"=>$result['kwic'],
                 "default_action"=>[
                     "type"=>"web_url",
                     "url"=>$result['url']
+                ],
+                "buttons"=>[
+                    [
+                        "type"=>'web_url',
+                        "url"=>$result['url'],
+                        "title"=>$this->isSearch() ? "View Page" : "Read Article"
+                    ]
+                ]
+            ];
+            $currentCount++;
+            if ($currentCount == $threshold) {
+                break;
+            }
+        }
+
+        if (($searchResults['count'] - ($pageNum * 8)) > 0) {
+            $responseTemplate["attachment"]["payload"]["elements"][] = [
+                "title"=>'See next results',
+                "image_url"=>'https://is238-group5.cf/bot/images/NextArrow.png',
+                "subtitle"=>'Display the next or last set of '.$this->getSearchTerm().'.',
+                "buttons"=>[
+                    [
+                        "type"=>'postback',
+                        "title"=>'Next Results',
+                        "payload"=>$this->command.' '.($pageNum + 1).'~!@#'.$keyword
+                    ],
+                    [
+                        "type"=>'postback',
+                        "title"=>'Last Results',
+                        "payload"=>$this->command.' '.(round($searchResults['count'] / 8)).'~!@#'.$keyword
+                    ]
                 ]
             ];
         }
-        if (count($searchResults['results']) == 1) {
-            $responseTemplate["attachment"]["payload"]["template_type"] = "generic";
-        }
+
         $this->send($responseTemplate);
-        $this->sendAction(SenderAction::typingOn);
-        $this->send($this->getSearchTimeTemplate($pageNum, $keyword, $searchResults['count'], $searchResults['time']));
     }
 }
