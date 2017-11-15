@@ -84,30 +84,49 @@ class SearchBotCommand extends BotCommand {
         }
     }
 
-    function getButtonResponseTemplate($index, $topic) {
-        return ["attachment"=>[
+    function getListTemplate() {
+        $template = ["attachment"=>[
             "type"=>"template",
             "payload"=>[
-                "template_type"=>"button",
-                "text"=>$index.'. '.$topic,
-            "buttons"=>[
-                [
-                    "type"=>'postback',
-                    "title"=>'Search '.$topic,
-                    "payload"=>'SEARCH '.$topic
-                ]
-            ]
+                "template_type"=>"list",
+                "top_element_style"=>"compact",
+                "elements"=>array()
             ]
         ]];
+        return $template;
     }
 
     function sendTrendResults($searchResults) {
         $this->send("Here are the top ".count($searchResults['trends'])." currently trending topics, ".$this->user->getFirstName().":");  
         $index = 1;
+        $responseTemplate = $this->getListTemplate();
+        $trendCount = 0;
         foreach ($searchResults['trends'] as $trend) {
-            $this->sendAction(SenderAction::typingOn);
-            $this->send($this->getButtonResponseTemplate($index, $trend));
+            $responseTemplate["attachment"]["payload"]["elements"][] = [
+                "title"=>$index.'. '.$trend,
+                "buttons"=>[
+                    [
+                        "type"=>'postback',
+                        "title"=>'Search Topics',
+                        "payload"=>'SEARCH '.$trend
+                    ]
+                ]
+                ];
+            $trendCount++;
+            if ($trendCount == 4) {
+                $this->send($responseTemplate);
+                $responseTemplate = $this->getListTemplate();
+                $trendCount = 0;
+                $this->sendAction(SenderAction::typingOn);
+            }
             $index++;
+        }
+        if ($trendCount == 1) {
+            $responseTemplate["attachment"]["payload"]["template_type"] = "generic";
+            unset($responseTemplate["attachment"]["payload"]["top_element_style"]);
+        }
+        if ($trendCount > 0) {
+            $this->send($responseTemplate);
         }
     }
 
