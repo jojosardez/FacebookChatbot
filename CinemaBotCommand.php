@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Class CinemaBotCommand
+ * This class returns screening times for a given Ayala Malls Cinema.
+ *
+ * Usage:
+ *  CINEMA <Ayala Malls Cinema Name>
+ *
+ * @author: Angelito Sardez, Jr.
+ * @date: 13/11/2017
+ */
 class CinemaBotCommand extends BotCommand {
     public function __construct($sender, $user) {
         parent::__construct("CINEMA", $sender, $user);

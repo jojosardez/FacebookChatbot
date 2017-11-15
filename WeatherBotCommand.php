@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Class WeatherBotCommand
+ * This class returns the current weather condition and forecast for the given location.
+ *
+ * Usage:
+ *  WEATHER <location>
+ *
+ * @author: Angelito Sardez, Jr.
+ * @date: 13/11/2017
+ */
 class WeatherBotCommand extends BotCommand
 {
     public function __construct($sender, $user)

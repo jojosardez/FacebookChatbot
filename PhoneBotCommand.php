@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Class PhoneBotCommand
+ * This class returns information about the given phone number.
+ *
+ * Usage:
+ *  PHONE <number>
+ *
+ * @author: Kasey Martin
+ * @date: 9/11/2017
+ */
 class PhoneBotCommand extends BotCommand {
     public function __construct($sender, $user) {
         parent::__construct("PHONE", $sender, $user);

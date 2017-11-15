@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Class User
+ * This class contains key information about the sender \ Facebook user who initiated the chat.
+ *
+ * @author: Angelito Sardez, Jr.
+ * @date: 12/11/2017
+ */
 class User {
     public function __construct($userDetails) {
         $this->firstName = $userDetails['first_name'];

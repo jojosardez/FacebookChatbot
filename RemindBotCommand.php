@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Class RemindBotCommand
+ * This class schedules a reminder for the sender.
+ *
+ * Usage:
+ *  REMIND <message> ON <date and time in YYYY-MM-DD hh:mm format>
+ *
+ * @author: Angelito Sardez, Jr.
+ * @date: 14/11/2017
+ */
 class RemindBotCommand extends BotCommand {
     public function __construct($sender, $user) {
         parent::__construct("REMIND", $sender, $user);

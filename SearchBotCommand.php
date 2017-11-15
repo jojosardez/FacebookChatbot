@@ -1,5 +1,24 @@
 <?php
 
+/**
+ * Class SearchBotCommand
+ * This class returns top trending topics or web and news articles search results based on the given keyword.
+ *
+ * Usage (for trending topics):
+ *  TRENDING
+ *  TREND
+ * 
+ * Usage (for web search):
+ *  SEARCH | FIND | LOOK | QUERY
+ *  SEARCH | FIND | LOOK | QUERY <keyword>
+ *
+ * Usage (for news articles):
+ *  NEWS | NEW
+ *  NEWS | NEW <keyword>
+ *
+ * @author: Angelito Sardez, Jr.
+ * @date: 15/11/2017
+ */
 class SearchBotCommand extends BotCommand {
     public function __construct($command, $sender, $user) {
         parent::__construct($command, $sender, $user);

@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Class Sender
+ * This class contains operations for sending messages and actions to a Facebook user.
+ *
+ * @author: Angelito Sardez, Jr.
+ * @date: 12/11/2017
+ */
 class Sender {
     public function __construct($senderId, $accessToken) {
         $this->senderId = $senderId;

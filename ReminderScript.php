@@ -1,4 +1,15 @@
 <?php
+
+/**
+ * Script ReminderScript.php
+ * This class sends a reminder to the given Facebook user.
+ *
+ * Usage:
+ *  php ReminderScript.php <Facebook User Id> <Facebook App Access Token> <Facebook User First Name> <Script delay in seconds> <Message>
+ *
+ * @author: Angelito Sardez, Jr.
+ * @date: 13/11/2017
+ */
 global $argv;
 $senderId = $argv[1];
 $accessToken = $argv[2]; 

@@ -1,4 +1,13 @@
 <?php
+
+/**
+ * Script Bot.php
+ * This is the entry point of the Chatbot script.
+ *
+ * @author: Angelito Sardez, Jr.
+ * @date: 13/11/2017
+ */
+
 $files = glob(__DIR__ . '/*.php');
 
 foreach ($files as $file) {

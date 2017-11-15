@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Class BotCommandFactory
+ * This class creates an instance of BotCommand based on the given command.
+ *
+ * @author: Angelito Sardez, Jr.
+ * @date: 14/11/2017
+ */
 class BotCommandFactory {
     public static function create($command, $sender, $user) {
         $commandLower = strtolower($command);

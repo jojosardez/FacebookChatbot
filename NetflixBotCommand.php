@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Class NetflixBotCommand
+ * This class returns list of movies or series available in Netflix, from the given movie or series name.
+ *
+ * Usage:
+ *  NETFLIX <Movie or Series Name>
+ *
+ * @author: Angelito Sardez, Jr.
+ * @date: 13/11/2017
+ */
 class NetflixBotCommand extends BotCommand {
     public function __construct($sender, $user) {
         parent::__construct("NETFLIX", $sender, $user);
