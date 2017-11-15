@@ -6,10 +6,8 @@ class SearchBotCommand extends BotCommand {
     }
 
     protected function executeCommand($parameter) {
-        //$this->send($parameter);
         $pageNum = $this->getPageNum($parameter);
         $keyword = $this->getKeyword($pageNum, $parameter);
-        //$this->send('$pageNum='.$pageNum.',$keyword='.$keyword);
         if (!$this->isTrending() && trim($keyword) == "" && $pageNum == 1) {
             $this->sendTextWithHelp("Hey ".$this->user->getFirstName().", you didn't specify any terms to search. I will give you the currently trending ".($this->isSearch() ? "topics" : "news")." then. You may also want to click \"See ".$this->command." Help\" button below to know more about searching ".($this->isSearch() ? "topics" : "news articles").".");
             $this->sendAction(SenderAction::typingOn);
@@ -113,17 +111,28 @@ class SearchBotCommand extends BotCommand {
         }
     }
 
-    function getResponseTemplate($pageNum, $keyword, $total) {
+    function getResponseTemplate() {
         $template = ["attachment"=>[
             "type"=>"template",
             "payload"=>[
                 "template_type"=>"list",
                 "top_element_style"=>"large",
-                "elements"=>array(),
-            "buttons"=>array()
+                "elements"=>array()
             ]
         ]];
+        return $template;
+    }
 
+    function getSearchTimeTemplate($pageNum, $keyword, $total, $time) {
+        $template = ["attachment"=>[
+            "type"=>"template",
+            "payload"=>[
+                "template_type"=>"button",
+                "text"=>"Searching took ".$time." ms, ".$this->user->getFirstName().".",
+            "buttons"=>array()
+            ]
+            ]
+        ];
         if ($pageNum > 1) {
             $template["attachment"]["payload"]["buttons"][] = [
                 "type"=>'postback',
@@ -138,14 +147,13 @@ class SearchBotCommand extends BotCommand {
                 "payload"=>$this->command.' '.($pageNum + 1).'~!@#'.$keyword
             ];
         }
-
         return $template;
     }
-
+    
     function sendSearchResults($pageNum, $keyword, $searchResults) {
-        $this->send("Displaying ".(($keyword == '') ? "trending " : "").($this->isSearch() ? 'topics' : 'news articles')." ".((($pageNum - 1) * 4) + 1)." to ".((($pageNum - 1) * 4) + count($searchResults['results'])).(($keyword == '') ? ":" : " of ".$searchResults['count'].", about \"".$keyword."\":"));  
+        $this->send("Displaying ".(($keyword == '') ? "trending " : "").($this->isSearch() ? 'topics' : 'news articles')." ".((($pageNum - 1) * 4) + 1)." to ".((($pageNum - 1) * 4) + count($searchResults['results']))." of ".$searchResults['count']." (Page ".$pageNum." of ".($searchResults['count'] / 4).")".(($keyword == '') ? ":" : ", about \"".$keyword."\":"));  
         $this->sendAction(SenderAction::typingOn);
-        $responseTemplate = $this->getResponseTemplate($pageNum, $keyword, $searchResults['count']);
+        $responseTemplate = $this->getResponseTemplate();
         foreach ($searchResults['results'] as &$result) {
             $responseTemplate["attachment"]["payload"]["elements"][] = [
                 "title"=>$result['title'],
@@ -162,6 +170,6 @@ class SearchBotCommand extends BotCommand {
         }
         $this->send($responseTemplate);
         $this->sendAction(SenderAction::typingOn);
-        $this->send("Searching took ".$searchResults['time']." ms, ".$this->user->getFirstName().".");
+        $this->send($this->getSearchTimeTemplate($pageNum, $keyword, $searchResults['count'], $searchResults['time']));
     }
 }
