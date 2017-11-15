@@ -8,7 +8,7 @@
  *  IP <IP address>
  *
  * @author: Archie Racadio
- * @date: 14/11/2017
+ * @date: 16/11/2017
  */
 class IpBotCommand extends BotCommand {
     public function __construct($sender, $user) {
@@ -23,8 +23,12 @@ class IpBotCommand extends BotCommand {
 
     protected function getIPDetails($ip) {
 
-  $loc = json_decode(file_get_contents("https://ipapi.co/{$ip}/json"));
+        $loc = json_decode(file_get_contents("https://ipapi.co/{$ip}/json"));
     
-$this->send($this->command." Hi, ".$this->user->getFirstName().". Your IP address is: " .$loc->ip);
+        $formatted = "";
+        foreach ($loc as $key => $value){
+            if($value != '') $formatted.=ucfirst(str_replace("_"," ",$key))." : ".str_replace("_"," ",$value).chr(10);
+        }
+        $this->send($formatted);
    }
 }
