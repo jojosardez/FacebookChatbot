@@ -8,7 +8,7 @@
  *  NETFLIX <Movie or Series Name>
  *
  * @author: Angelito Sardez, Jr.
- * @date: 13/11/2017
+ * @date: 16/11/2017
  */
 class NetflixBotCommand extends BotCommand {
     public function __construct($sender, $user) {
@@ -46,23 +46,15 @@ class NetflixBotCommand extends BotCommand {
             ]
         ];
         $headerContext = stream_context_create($header);
-        return json_decode(file_get_contents('https://unogs.com/nf.cgi?u=vgrv6hjhe2tlajqj6o7cjnhe71&q='.urlencode($title)."&t=ns&cl=&st=bs&ob=&p=1&l=100&inc=&ao=and", false, $headerContext), true);
+        return json_decode(file_get_contents('https://unogs.com/nf.cgi?u=vgrv6hjhe2tlajqj6o7cjnhe71&q='.urlencode($title)."&t=ns&cl=&st=bs&ob=&p=1&l=8&inc=&ao=and", false, $headerContext), true);
     }
 
     function getResponseTemplate($title) {
         return ["attachment"=>[
             "type"=>"template",
             "payload"=>[
-                "template_type"=>"list",
-                "top_element_style"=>"large",
-                "elements"=>array(),
-            "buttons"=>[
-                [
-                    "type"=>'web_url',
-                    "url"=>'https://unogs.com/?q='.$title,
-                    "title"=>"View All"
-                ]
-            ]
+                "template_type"=>"generic",
+                "elements"=>array()
             ]
         ]];
     }
@@ -70,37 +62,32 @@ class NetflixBotCommand extends BotCommand {
     function sendTitles($title, $titles) {        
         $responseTemplate = $this->getResponseTemplate($title);
         $titleCount = 0;
-        while ($titleCount < 4 && $titleCount < $titles['COUNT']) {
+        foreach ($titles['ITEMS'] as &$item) {
             $responseTemplate["attachment"]["payload"]["elements"][] = [
-                "title"=>html_entity_decode(strip_tags($titles['ITEMS'][$titleCount][1]), ENT_QUOTES)." (".ucfirst($titles['ITEMS'][$titleCount][6]).", ".$titles['ITEMS'][$titleCount][7].")",
-                "image_url"=>$titles['ITEMS'][$titleCount][2],
-                "subtitle"=>html_entity_decode(strip_tags($titles['ITEMS'][$titleCount][3]), ENT_QUOTES),
+                "title"=>html_entity_decode(strip_tags($item[1]), ENT_QUOTES)." (".ucfirst($item[6]).", ".$item[7].")",
+                "image_url"=>$item[2],
+                "subtitle"=>html_entity_decode(strip_tags($item[3]), ENT_QUOTES),
                 "default_action"=>[
-                    "type"=>"web_url",
-                    "url"=>"https://unogs.com/video/?v=".$titles['ITEMS'][$titleCount][4]
+                    "type"=>'web_url',
+                    "url"=>'https://unogs.com/video/?v='.$item[4]
+                ],
+                "buttons"=>[
+                    [
+                        "type"=>'web_url',
+                        "url"=>'https://unogs.com/video/?v='.$item[4],
+                        "title"=>'View Details'
+                    ]
                 ]
             ];
             $titleCount++;
-        }
-        if ($titleCount == 1) {
-            $responseTemplate["attachment"]["payload"]["template_type"] = "generic";
-            $responseTemplate["attachment"]["payload"]["elements"][0]["buttons"] = [
-                [
-                    "type"=>'web_url',
-                    "url"=>$responseTemplate["attachment"]["payload"]["elements"][0]["default_action"]["url"],
-                    "title"=>"View More Details"
-                ]
-            ];
-            unset($responseTemplate["attachment"]["payload"]["top_element_style"]);
-            unset($responseTemplate["attachment"]["payload"]["buttons"]);
-        }        
+        }      
         $this->send($responseTemplate);
         return $titleCount;
     }
 
     function sendMultipleTitlesMessage($titlesSentCount, $totalTitleCount, $title) {
         if ($titlesSentCount <  $totalTitleCount){
-            $this->send("Hey ".$this->user->getFirstName().", there were actually ".$totalTitleCount." movies and series that matched \"".$title."\". I just returned the 4 most relevant match but you can see them all when you click the \"View All\" button above.");
+            $this->send("Hey ".$this->user->getFirstName().", there were actually ".$totalTitleCount." movies and series that matched \"".$title."\". I just returned the 8 most relevant match but you can see them all when you click the \"View All\" button above.");
         }
     }
 }
