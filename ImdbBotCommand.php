@@ -42,7 +42,6 @@ class ImdbBotCommand extends BotCommand {
 
                 $size = sizeof($matchArray);
 
-                $this->send("Hey " . $this->user->getFirstName() . ", there are " . $size . " matched result(s). But displaying only the most relevant.");
 
                 $results = ["attachment" => [
                     "type" => "template",
@@ -119,6 +118,7 @@ class ImdbBotCommand extends BotCommand {
                     }
 
                     $this->send($results);
+                    $this->send("Hey " . $this->user->getFirstName() . ", there are " . $size . " matched result(s). But I only displayed the most relevant ones.");
                 }
 
             } else {

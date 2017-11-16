@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Class BotCommandFactory
  * This class creates an instance of BotCommand based on the given command.
@@ -76,6 +75,9 @@ class BotCommandFactory {
             case "trend":
             case "trending":
                 return new SearchBotCommand("TRENDING", $sender, $user);
+                break;
+            case "ask":
+                return new MagicBotCommand($sender, $user);
                 break;
             default:
                 return new UnknownBotCommand($command, $sender, $user);
