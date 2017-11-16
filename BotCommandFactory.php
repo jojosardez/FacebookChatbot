@@ -1,4 +1,11 @@
 <?php
+/**
+ * Class BotCommandFactory
+ * This class creates an instance of BotCommand based on the given command.
+ *
+ * @author: Angelito Sardez, Jr.
+ * @date: 14/11/2017
+ */
 
 class BotCommandFactory {
     public static function create($command, $sender, $user) {
@@ -55,6 +62,9 @@ class BotCommandFactory {
                 break;
             case "remind":
                 return new RemindBotCommand($sender, $user);
+                break;
+            case "ask":
+                return new AskBotCommand($sender, $user);
                 break;
             default:
                 return new UnknownBotCommand($command, $sender, $user);
