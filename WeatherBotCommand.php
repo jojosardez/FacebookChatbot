@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Class WeatherBotCommand
+ * This class returns the current weather condition and forecast for the given location.
+ *
+ * Usage:
+ *  WEATHER <location>
+ *
+ * @author: Angelito Sardez, Jr.
+ * @date: 16/11/2017
+ */
 class WeatherBotCommand extends BotCommand
 {
     public function __construct($sender, $user)
@@ -15,20 +25,37 @@ class WeatherBotCommand extends BotCommand
         }
 
         $locations = $this->queryLocation($parameter);
-        $zmwCode = $this->getZmwCode($locations);
+        $validLocationsCount = $this->getValidLocationsCount($locations);
 
-        if (empty($zmwCode)) {
+        if ($validLocationsCount == 0) {
           $this->send("No weather condition and forecast found for the location \"".$parameter."\", ".$this->user->getFirstName().". Please make sure that the place exists or be more specific in providing the location. (e.g. WEATHER Singapore, Singapore)");
         }
         else {
-            $weatherCondition = $this->getWeatherCondition($zmwCode);
-            $this->sendWeatherCondition($zmwCode, $weatherCondition);
-            $this->sendMultipleLocationsMessage($locations, $parameter);
+            if ($validLocationsCount > 1) {
+                $this->sendMultipleLocationsMessage($locations, $parameter);                
+            }
+            else {
+                $zmwCode = $this->getZmwCode($locations);
+                $weatherCondition = $this->getWeatherCondition($zmwCode);
+                $this->sendWeatherCondition($zmwCode, $weatherCondition);
+            }
         }
     }
 
     function queryLocation($location) {
         return json_decode(file_get_contents('http://autocomplete.wunderground.com/aq?query='.urlencode($location)), true);
+    }
+
+    function getValidLocationsCount($locations) {
+        $count = 0;
+        if (!empty($locations['RESULTS'])) {
+            foreach ($locations['RESULTS'] as &$place) {
+                if (strtolower($place['tz']) != 'missing') {
+                    $count++;
+                }
+            }
+        }
+        return $count;
     }
 
     function getZmwCode($locations) {
@@ -53,14 +80,15 @@ class WeatherBotCommand extends BotCommand
             "type"=>"template",
             "payload"=>[
                 "template_type"=>"list",
+                "top_element_style"=>"large",
                 "elements"=>[
                 [
-                    "title"=>'Current weather condition in '.$weatherCondition['current_observation']['display_location']['full'].':',
+                    "title"=>'Current weather in '.$weatherCondition['current_observation']['display_location']['full'].':',
                     "image_url"=>$weatherCondition['current_observation']['icon_url'],
-                    "subtitle"=>$weatherCondition['current_observation']['weather'].' at '.$weatherCondition['current_observation']['temperature_string'].'. '.$weatherCondition['current_observation']['observation_time'].'.'
+                    "subtitle"=>$weatherCondition['current_observation']['weather'].' at '.$weatherCondition['current_observation']['temperature_string'].'.'
                 ],
                 [
-                    "title"=>'Precipitation forecast for '.$weatherCondition['current_observation']['display_location']['full'].':',
+                    "title"=>'Precipitation forecast:',
                     "subtitle"=>'Today would be '.$weatherCondition['current_observation']['precip_today_string'].', while '.$weatherCondition['current_observation']['precip_1hr_string'].' in the next hour.'
                 ]
             ],
@@ -75,13 +103,56 @@ class WeatherBotCommand extends BotCommand
             ]]);
     }
 
+    
+    function getListTemplate() {
+        $template = ["attachment"=>[
+            "type"=>"template",
+            "payload"=>[
+                "template_type"=>"list",
+                "top_element_style"=>"compact",
+                "elements"=>array()
+            ]
+        ]];
+        return $template;
+    }
+
     function sendMultipleLocationsMessage($locations, $location) {
-        if (sizeof($locations['RESULTS']) > 1) {
-            $locationsText = "";
-            foreach ($locations['RESULTS'] as &$place) {
-                $locationsText = $locationsText.$place['name']." | ";
+        $this->send("Hey ".$this->user->getFirstName().", there are more than 1 location that matched \"".$location."\". Which one are you looking for:");
+        $this->sendAction(SenderAction::typingOn);
+        $responseTemplate = $this->getListTemplate();
+        $firstMatch = '';
+        $locationCount = 0;
+        foreach ($locations['RESULTS'] as &$place) {
+            if (strtolower($place['tz']) != 'missing') {
+                if ($firstMatch == '') {
+                    $firstMatch = $place['name'];
+                }
+                $responseTemplate["attachment"]["payload"]["elements"][] = [
+                    "title"=>$place['name'],
+                    "buttons"=>[
+                        [
+                            "type"=>'postback',
+                            "title"=>'View Weather',
+                            "payload"=>'WEATHER '.$place['name']
+                        ]
+                    ]
+                    ];
+                $locationCount++;
+                if ($locationCount == 4) {
+                    $this->send($responseTemplate);
+                    $responseTemplate = $this->getListTemplate();
+                    $locationCount = 0;
+                    $this->sendAction(SenderAction::typingOn);
+                }
             }
-            $this->send("Hey ".$this->user->getFirstName().", there were actually ".sizeof($locations['RESULTS'])." locations that matched \"".$location."\". I just returned the most relevant match but you can be more specific by typing the name of the other locations completely. (e.g. WEATHER < ".rtrim($locationsText,"| ")." >)");
         }
+        if ($locationCount == 1) {
+            $responseTemplate["attachment"]["payload"]["template_type"] = "generic";
+            unset($responseTemplate["attachment"]["payload"]["top_element_style"]);
+        }
+        if ($locationCount > 0) {
+            $this->send($responseTemplate);
+        }
+        $this->send("Next time you can skip this by providing the location completely e.g. \"WEATHER ".$firstMatch."\".");
     }
 }

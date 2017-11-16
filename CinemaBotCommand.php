@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Class CinemaBotCommand
+ * This class returns screening times for a given Ayala Malls Cinema.
+ *
+ * Usage:
+ *  CINEMA <Ayala Malls Cinema Name>
+ *
+ * @author: Angelito Sardez, Jr.
+ * @date: 16/11/2017
+ */
 class CinemaBotCommand extends BotCommand {
     public function __construct($sender, $user) {
         parent::__construct("CINEMA", $sender, $user);
@@ -46,33 +56,26 @@ class CinemaBotCommand extends BotCommand {
             }
         }
         return $movies;
-    }
+    } 
 
-    function getResponseTemplate($firstResult) {
-        return ["attachment"=>[
+    function getResponseTemplate() {
+        $template = ["attachment"=>[
             "type"=>"template",
             "payload"=>[
-                "template_type"=>"list",
-                "top_element_style"=>$firstResult ? "large" : "compact",
-                "elements"=>array(),
-            "buttons"=>[
-                [
-                    "type"=>'web_url',
-                    "url"=>'https://www.sureseats.com/quick-cinema',
-                    "title"=>"View All Cinemas"
-                ]
-            ]
+                "template_type"=>"generic",
+                "elements"=>array()
             ]
         ]];
+        return $template;
     }
 
     function sendMovieCinemas($theater, $movies) {
         date_default_timezone_set('Asia/Manila');
-        $this->send("Displaying \"".$theater['name']."\" cinema schedules for today (".date('F j, Y').")...");
+        $this->send("Displaying ".$theater['name']." cinema schedule for today (".date('F j, Y')."):");
         $this->sendAction(SenderAction::typingOn);
-        $sent = false;
-        $responseTemplate = $this->getResponseTemplate(true);
+        $responseTemplate = $this->getResponseTemplate();
         $cinemaCount = 0;
+        $totalCinemaCount = 0;
         foreach($movies as &$movie) {
             foreach ($movie['schedules'] as $schedule) { 
                 if ($schedule['date_id'] == date('Y-m-d')) {
@@ -85,14 +88,14 @@ class CinemaBotCommand extends BotCommand {
                                 }                                
                                 $responseTemplate["attachment"]["payload"]["elements"][] = [
                                     "title"=>$cinema['cinema_name'].": ".$movie['title'],
-                                    "image_url"=>$movie['poster'],
+                                    "image_url"=>($movie['poster'] == '') ? 'https://is238-group5.cf/bot/images/NoImageAvailable.jpg' : $movie['poster'],
                                     "subtitle"=>"Showtimes: ".rtrim($showingTimes," | ")
                                 ];
                                 $cinemaCount++;
-                                if ($cinemaCount == 4) {
+                                $totalCinemaCount++;
+                                if ($cinemaCount == 10) {
                                     $this->send($responseTemplate);
-                                    $sent = true;
-                                    $responseTemplate = $this->getResponseTemplate(false);
+                                    $responseTemplate = $this->getResponseTemplate();
                                     $cinemaCount = 0;
                                     $this->sendAction(SenderAction::typingOn);
                                 }
@@ -103,24 +106,27 @@ class CinemaBotCommand extends BotCommand {
                 }
             }
         }
-        if ($cinemaCount == 1) {
-            $responseTemplate["attachment"]["payload"]["template_type"] = "generic";
-            $responseTemplate["attachment"]["payload"]["elements"][0]["buttons"] = [
-                [
+        if ($totalCinemaCount == 0) {
+            $this->send("Oops! It seems like there are no movies showing in any of \"".$theater['name']."\" cinemas today, ".$this->user->getFirstName().". You could try searching on other Ayala Malls Cinema.");
+        }
+        else {
+            $responseTemplate["attachment"]["payload"]["elements"][] = [
+                "title"=>'View All Cinemas',
+                "image_url"=>'https://is238-group5.cf/bot/images/Cinema.jpg',
+                "subtitle"=>'Check all cinema schedules, reserve seats, and buy tickets online!',
+                "default_action"=>[
                     "type"=>'web_url',
-                    "url"=>'https://www.sureseats.com/quick-cinema',
-                    "title"=>"View All Cinemas"
+                    "url"=>'https://www.sureseats.com/quick-cinema'
+                ],
+                "buttons"=>[
+                    [
+                        "type"=>'web_url',
+                        "url"=>'https://www.sureseats.com/quick-cinema',
+                        "title"=>'View All Cinemas'
+                    ]
                 ]
             ];
-            unset($responseTemplate["attachment"]["payload"]["top_element_style"]);
-            unset($responseTemplate["attachment"]["payload"]["buttons"]);
-        }
-        if ($cinemaCount > 0) {
             $this->send($responseTemplate);
-            $sent = true;
-        }
-        if (!$sent) {
-            $this->send("Oops! It seems like there are no movies showing in any of \"".$theater['name']."\" cinemas today, ".$this->user->getFirstName().". You could try searching on other Ayala Malls Cinema.");
         }
     }
 }

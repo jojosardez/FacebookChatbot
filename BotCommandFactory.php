@@ -6,7 +6,6 @@
  * @author: Angelito Sardez, Jr.
  * @date: 14/11/2017
  */
-
 class BotCommandFactory {
     public static function create($command, $sender, $user) {
         $commandLower = strtolower($command);
@@ -62,6 +61,20 @@ class BotCommandFactory {
                 break;
             case "remind":
                 return new RemindBotCommand($sender, $user);
+                break;
+            case "search":
+            case "find":
+            case "look":
+            case "query":
+                return new SearchBotCommand("SEARCH", $sender, $user);
+                break;
+            case "new":
+            case "news":
+                return new SearchBotCommand("NEWS", $sender, $user);
+                break;
+            case "trend":
+            case "trending":
+                return new SearchBotCommand("TRENDING", $sender, $user);
                 break;
             case "ask":
                 return new AskBotCommand($sender, $user);

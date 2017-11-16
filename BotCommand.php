@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Class BotCommand
+ * This is the base class of all bot command implementations.
+ *
+ * @author: Angelito Sardez, Jr.
+ * @date: 12/11/2017
+ */
 abstract class BotCommand {
     public function __construct($command, $sender, $user) {
         $this->command = $command;

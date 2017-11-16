@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Class RemindBotCommand
+ * This class schedules a reminder for the sender.
+ *
+ * Usage:
+ *  REMIND <message> ON <date and time in YYYY-MM-DD hh:mm format>
+ *
+ * @author: Angelito Sardez, Jr.
+ * @date: 14/11/2017
+ */
 class RemindBotCommand extends BotCommand {
     public function __construct($sender, $user) {
         parent::__construct("REMIND", $sender, $user);
@@ -7,7 +17,7 @@ class RemindBotCommand extends BotCommand {
 
     protected function executeCommand($parameter) {
         if (trim($parameter) == "") {
-            $this->sendTextWithHelp("Sorry ".$this->user->getFirstName().", you need to specify the date and time when want me to remind you. (e.g. REMIND <message> ON <date and time in YYYY-MM-DD hh:mm format>)");
+            $this->sendTextWithHelp("Sorry ".$this->user->getFirstName().", you need to specify the date and time when you want me to remind you. (e.g. REMIND <message> ON <date and time in YYYY-MM-DD hh:mm format>)");
             return;
         }
         date_default_timezone_set('Asia/Manila');
@@ -29,7 +39,7 @@ class RemindBotCommand extends BotCommand {
             }
             $delay = strtotime($dateTime) - strtotime(date("Y-m-d H:i:s"));
             shell_exec('php /var/www/html/bot/ReminderScript.php '.$this->sender->getSenderId().' '.$this->sender->getAccessToken().' '.$this->user->getFirstName().' '.$delay.' '.urlencode('Remind '.$parameter).' > /dev/null 2>/dev/null &');
-            $this->send("Got it, ".$this->user->getFirstName()."!. I'll remind you when it's time.");
+            $this->send("Got it, ".$this->user->getFirstName()."! I'll remind you when it's time.");
         }
     }
 

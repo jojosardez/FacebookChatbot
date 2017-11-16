@@ -12,7 +12,8 @@
 * @date: 11/11/2017
 */
 
-    class HelpBotCommand extends BotCommand {
+class HelpBotCommand extends BotCommand {
+   
     public function __construct($sender, $user) {
         parent::__construct("HELP", $sender, $user);
     }
