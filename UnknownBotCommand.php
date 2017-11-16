@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Class UnknownBotCommand
+ * This class handles bot command which is not recognized by the BotCommandFactory.
+ *
+ * @author: Angelito Sardez, Jr.
+ * @date: 12/11/2017
+ */
 class UnknownBotCommand extends BotCommand {
     public function __construct($command, $sender, $user) {
         parent::__construct($command, $sender, $user);

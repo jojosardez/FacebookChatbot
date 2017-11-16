@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * Class HistoryBotCommand
+ * This class returns the historical event that happened on a specific date or randomly.
+ *
+ * Usage:
+ *  HISTORY
+ *  HISTORY today
+ *  HISTORY date
+ *
+ * @author: Kasey Martin
+ * @date: 9/11/2017
+ */
 class HistoryBotCommand extends BotCommand {
     public function __construct($sender, $user) {
         parent::__construct("HISTORY", $sender, $user);
