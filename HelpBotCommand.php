@@ -21,8 +21,8 @@
 
         $lowerParameter = strtolower($parameter);
         if (empty($parameter)) {
-            $this->send("Hey ".$this->user->getFirstName().", there are a list of things you can ask me");
-            $this->send("imdb, php, cinema, weather, phone, gender, recipe, pokedex, ip, history, trump, university, netflix");
+            $this->send("Hey ".$this->user->getFirstName().", there are a list of things you can ask me: ");
+            $this->send("e.g. imdb, php, cinema, weather, phone, gender, recipe, pokedex, ip, history, trump, university, netflix");
             $this->send("Want to know more? Try help and the keyword you're looking for (i.e. help imdb)");
         } elseif($lowerParameter == "imdb") {
             $this->displayUsage("Wanna search for a movie? You can do so by typing the movie title (i.e. imdb pitch perfect 3)", "imdb pitch perfect 3");

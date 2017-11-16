@@ -64,7 +64,7 @@ class BotCommandFactory {
                 return new RemindBotCommand($sender, $user);
                 break;
             case "ask":
-                return new AskBotCommand($sender, $user);
+                return new MagicBotCommand($sender, $user);
                 break;
             default:
                 return new UnknownBotCommand($command, $sender, $user);

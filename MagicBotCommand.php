@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class AskBotCommand
+ * Class MagicBotCommand
  * This class randomnly answers using Magic_8-Ball
  *
  * usage:
@@ -11,28 +11,30 @@
  *  @author: Karez Bartolo
  *  @date: 15/11/2017
  */
-class AskBotCommand extends BotCommand {
+class MagicBotCommand extends BotCommand {
+
     public function __construct($sender, $user) {
-        parent::__construct("ECHO", $sender, $user);
+        parent::__construct("ASK", $sender, $user);
     }
 
     protected function executeCommand($parameter) {
         $MAGIC_URL = "https://8ball.delegator.com/magic/JSON/";
 
         if (!empty($parameter)) {
-            $talkback = $this->curl_invoke($MAGIC_URL);
+            $response = $this->curl_invoke($MAGIC_URL.$parameter);
 
+            $talkback = json_decode($response, true);
             $answer = $talkback["magic"]["answer"];
             $type = $talkback["magic"]["type"];
 
             if ($type == "Affirmative") {
-                $emoji = ":3";
+                $emoji = ":)";
             } elseif ($type = "Contrary") {
-                $emoji = "[[notbaad]]";
+                $emoji = ":(";
             } else {
-                $emoji = ":|]";
+                $emoji = ":|";
             }
-            $this->send("Hey ".$this->user->getFirstName().", ".$answer." ".$emoji);
+            $this->send("Hey ".$this->user->getFirstName().", ".lcfirst($answer)." ".$emoji);
         } else {
             $this->send("Maybe you forgot your pants today? Ask a question! ".$this->user->getFirstName()." :poop:");
         }
@@ -49,7 +51,7 @@ class AskBotCommand extends BotCommand {
 
         // Handle failed query
         if ($httpcode != 200) {
-            $this->send("Pokedex has an internal problem ERRCODE: ".$httpcode);
+            $this->send("Sorry! My spirits are out and about: ".$httpcode);
             die();
         }
 
