@@ -5,10 +5,10 @@
  * This class schedules a reminder for the sender.
  *
  * Usage:
- *  REMIND <message> ON <date and time in YYYY-MM-DD hh:mm format>
+ *  REMIND <message> ON <date and time in YYYY-MM-DD hh:mm(:ss) format>
  *
  * @author: Angelito Sardez, Jr.
- * @date: 14/11/2017
+ * @date: 16/11/2017
  */
 class RemindBotCommand extends BotCommand {
     public function __construct($sender, $user) {
@@ -48,8 +48,8 @@ class RemindBotCommand extends BotCommand {
     }
 
     function validateDateTime($dateTime) {
-        $formattedDateTime = DateTime::createFromFormat('Y-m-d H:i', $dateTime);
-        return $formattedDateTime && $formattedDateTime->format('Y-m-d H:i') === $dateTime;
+        $formattedDateTime = DateTime::createFromFormat('Y-m-d H:i:s', $dateTime);
+        return $formattedDateTime && $formattedDateTime->format('Y-m-d H:i:s') === $dateTime;
     }
 
     function validateDateTimeIfInFuture($dateTime) {
