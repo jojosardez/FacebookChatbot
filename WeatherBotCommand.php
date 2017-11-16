@@ -8,7 +8,7 @@
  *  WEATHER <location>
  *
  * @author: Angelito Sardez, Jr.
- * @date: 13/11/2017
+ * @date: 16/11/2017
  */
 class WeatherBotCommand extends BotCommand
 {
@@ -80,14 +80,15 @@ class WeatherBotCommand extends BotCommand
             "type"=>"template",
             "payload"=>[
                 "template_type"=>"list",
+                "top_element_style"=>"large",
                 "elements"=>[
                 [
-                    "title"=>'Current weather condition in '.$weatherCondition['current_observation']['display_location']['full'].':',
+                    "title"=>'Current weather in '.$weatherCondition['current_observation']['display_location']['full'].':',
                     "image_url"=>$weatherCondition['current_observation']['icon_url'],
-                    "subtitle"=>$weatherCondition['current_observation']['weather'].' at '.$weatherCondition['current_observation']['temperature_string'].'. '.$weatherCondition['current_observation']['observation_time'].'.'
+                    "subtitle"=>$weatherCondition['current_observation']['weather'].' at '.$weatherCondition['current_observation']['temperature_string'].'.'
                 ],
                 [
-                    "title"=>'Precipitation forecast for '.$weatherCondition['current_observation']['display_location']['full'].':',
+                    "title"=>'Precipitation forecast:',
                     "subtitle"=>'Today would be '.$weatherCondition['current_observation']['precip_today_string'].', while '.$weatherCondition['current_observation']['precip_1hr_string'].' in the next hour.'
                 ]
             ],
@@ -131,7 +132,7 @@ class WeatherBotCommand extends BotCommand
                     "buttons"=>[
                         [
                             "type"=>'postback',
-                            "title"=>'View Details',
+                            "title"=>'View Weather',
                             "payload"=>'WEATHER '.$place['name']
                         ]
                     ]
