@@ -181,7 +181,7 @@ class SearchBotCommand extends BotCommand {
     }
 
     function getSetRatioTerm($pageNum,  $totalCount) {
-        return "Set ".$pageNum." of ".(round($totalCount / 8));
+        return "Set ".$pageNum." of ".(ceil($totalCount / 8));
     }
 
     function sendSearchResults($pageNum, $keyword, $searchResults) {
@@ -252,7 +252,7 @@ class SearchBotCommand extends BotCommand {
                     [
                         "type"=>'postback',
                         "title"=>'Last Results',
-                        "payload"=>$this->command.' '.(round($searchResults['count'] / 8)).'~!@#'.$keyword
+                        "payload"=>$this->command.' '.(ceil($searchResults['count'] / 8)).'~!@#'.$keyword
                     ]
                 ]
             ];
