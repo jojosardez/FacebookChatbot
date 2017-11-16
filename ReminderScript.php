@@ -26,7 +26,7 @@ $messageToSend = [
         "elements"=>[
         [
             "title"=>"Hey ".$user.", It's time!",
-            "image_url"=>"http://static.postcardmania.com/up/designs/150629/reminder_mailer_REM_7103.jpg",
+            "image_url"=>"https://is238-group5.cf/bot/images/Reminder.jpg",
             "subtitle"=> urldecode($message)
         ]
         ]
