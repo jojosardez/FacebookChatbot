@@ -196,7 +196,7 @@ class SearchBotCommand extends BotCommand {
         if ($pageNum > 1) {
             $responseTemplate["attachment"]["payload"]["elements"][] = [
                 "title"=>'See previous results',
-                "image_url"=>'https://is238-group5.cf/bot/images/BackArrow.png',
+                "image_url"=>'https://is238-group5.cf/bot/images/BackArrow.jpg',
                 "subtitle"=>'Display the previous or first set of '.$this->getSearchTerm().'.',
                 "buttons"=>[
                     [
@@ -218,7 +218,7 @@ class SearchBotCommand extends BotCommand {
         foreach ($searchResults['results'] as &$result) {
             $responseTemplate["attachment"]["payload"]["elements"][] = [
                 "title"=>$result['title'],
-                "image_url"=>($result['iurl'] == '') ? 'https://is238-group5.cf/bot/images/NoImageAvailable.png' : $result['iurl'],
+                "image_url"=>($result['iurl'] == '') ? 'https://is238-group5.cf/bot/images/NoImageAvailable.jpg' : $result['iurl'],
                 "subtitle"=>$result['kwic'],
                 "default_action"=>[
                     "type"=>"web_url",
@@ -241,7 +241,7 @@ class SearchBotCommand extends BotCommand {
         if (($searchResults['count'] - ($pageNum * 8)) > 0) {
             $responseTemplate["attachment"]["payload"]["elements"][] = [
                 "title"=>'See next results',
-                "image_url"=>'https://is238-group5.cf/bot/images/NextArrow.png',
+                "image_url"=>'https://is238-group5.cf/bot/images/NextArrow.jpg',
                 "subtitle"=>'Display the next or last set of '.$this->getSearchTerm().'.',
                 "buttons"=>[
                     [
