@@ -78,8 +78,10 @@ class RemindBotCommand extends BotCommand {
     }
 
     function validateDateTime($dateTime) {
-        $formattedDateTime = DateTime::createFromFormat('Y-m-d H:i:s', $dateTime);
-        return $formattedDateTime && $formattedDateTime->format('Y-m-d H:i:s') === $dateTime;
+        $formattedDateTime = DateTime::createFromFormat('Y-m-d H:i', $dateTime);
+        $formattedDateTimeWithSec = DateTime::createFromFormat('Y-m-d H:i:s', $dateTime);
+        return ($formattedDateTime && $formattedDateTime->format('Y-m-d H:i') === (new DateTime($dateTime))->format('Y-m-d H:i')) ||
+                ($formattedDateTimeWithSec && $formattedDateTimeWithSec->format('Y-m-d H:i:s') === (new DateTime($dateTime))->format('Y-m-d H:i:s'));
     }
 
     function validateDateTimeIfInFuture($dateTime) {
