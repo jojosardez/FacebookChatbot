@@ -9,7 +9,7 @@
  *  imdb title movie
  *
  *  @author: Karez Bartolo
- *  @date: 15/11/2017
+ *  @date: 17/11/2017
  */
 class ImdbBotCommand extends BotCommand {
     public function __construct($sender, $user) {
@@ -19,8 +19,8 @@ class ImdbBotCommand extends BotCommand {
     protected function executeCommand($parameter) {
 
         $first = strtok($parameter, " ");
-        if ($first == "title") {
-            $parameter = explode("title ", $parameter);
+        if (strtolower($first) == "title") {
+            $parameter = explode($first." ", $parameter);
 
             $this->getMovieDetails(urlencode($parameter[1]));
         } else {

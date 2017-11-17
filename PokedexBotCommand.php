@@ -9,7 +9,7 @@
  *  pokedex number
  *
  * @author: Karez Bartolo
- * @date: 15/11/2017
+ * @date: 17/11/2017
  */
 class PokedexBotCommand extends BotCommand {
     public function __construct($sender, $user) {
@@ -25,7 +25,7 @@ class PokedexBotCommand extends BotCommand {
 
     protected function getPokeDetails($pokemon) {
 
-        $GET_POKEMON_DETAILS_URL = 'https://pokeapi.co/api/v2/pokemon/'.$pokemon;
+        $GET_POKEMON_DETAILS_URL = 'https://pokeapi.co/api/v2/pokemon/'.urlencode(strtolower($pokemon));
 
         if(!empty($pokemon)){
 
