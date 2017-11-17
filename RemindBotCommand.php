@@ -37,7 +37,7 @@ class RemindBotCommand extends BotCommand {
         }
         else {
             $isDatePartSpecific = $this->getIsTargetDate($parameter);
-            $paramPart = explode($isDatePartSpecific ? " on " : " after ", $parameter);
+            $paramPart = explode($isDatePartSpecific ? " on " : " after ", strtolower($parameter));
             $dateTime = trim($paramPart[sizeof($paramPart) - 1]);
             if ($isDatePartSpecific) {
                 if (!$this->validateDateTime($dateTime)) {
