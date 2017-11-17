@@ -79,6 +79,9 @@ class BotCommandFactory {
             case "ask":
                 return new MagicBotCommand($sender, $user);
                 break;
+			case "chuck":
+                return new ChuckBotCommand($sender, $user);
+                break;
             default:
                 return new UnknownBotCommand($command, $sender, $user);
         }

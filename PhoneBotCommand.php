@@ -27,12 +27,12 @@ class PhoneBotCommand extends BotCommand {
         	if($result->valid){
         		$formatted = "";
         		foreach ($result as $key => $value){
-        			if($value != '') $formatted.=$key." : ".$value.chr(10);
+        			if($value != '') $formatted.=ucfirst(str_replace("_"," ",$key))." : ".$value.chr(10);
         		}
         		$this->send($formatted);
         	}
         	else{
-        		$this->send("$parameter is not a valid phone number.");
+        		$this->send("Sorry $parameter is not a valid phone number. Although I am a simple robot, so maybe I'm mistaken? Please try putting a more complete number that starts with the country code :).");
         	}
         }else{
         	
